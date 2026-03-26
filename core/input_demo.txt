@@ -1,0 +1,12 @@
+Parece ser que el proceso vuelve a estar activo. Te refresco la posición y me indicas si continúas interesado:
+
+Ingeniero/a IA Generativa (Python): 
+
+El puesto está orientado a:
+
+Diseñar y desarrollar soluciones de IA Generativa y agentes.
+Implementar arquitecturas escalables e integraciones con sistemas existentes.
+Participar en todas las fases del proyecto (diseño, desarrollo, testing y despliegue).
+Optimizar y monitorizar soluciones en producción.
+Colaborar en la creación de componentes reutilizables.
+Buscamos perfiles con al menos 2 años de experiencia en proyectos de IA Generativa (RAG, agentes, automatización, generación de contenido, procesado documental, etc.), buen nivel de Python y experiencia con frameworks como LangChain, LlamaIndex, CrewAI u otros similares, además de entornos cloud (Azure, AWS o GCP).
