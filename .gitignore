@@ -23,6 +23,9 @@ logs/
 .idea/
 *.swp
 
+# Streamlit
+.streamlit/secrets.toml
+
 # Datos y Modelos (común en Agentic AI)
 data/
 models/

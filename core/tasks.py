@@ -1,14 +1,31 @@
-from crewai import Task
+from langchain.prompts import ChatPromptTemplate
 
-def tarea_evaluacion_tecnica(agent, texto_entrada):
-    return Task(
-        description=f'''Realiza un análisis profundo de los siguientes requisitos: {texto_entrada}.
-        Céntrate en:
-        1. Componentes clave de la infraestructura.
-        2. Factores determinantes para la escalabilidad.
-        3. Riesgos potenciales de integración con sistemas existentes.''',
-        expected_output='Un informe de evaluación técnica profesional en formato Markdown, estructurado por secciones.',
-        agent=agent,
-        # NUEVO: Esto creará el archivo automáticamente al terminar
-        output_file='informe_arquitectura.md' 
+def get_architecture_prompts():
+    """Define los prompts de LangChain para cada etapa del análisis."""
+    
+    evaluacion_template = ChatPromptTemplate.from_messages([
+        ("system", "{system_prompt}"),
+        ("human", "Analiza estos requisitos: {proyecto}. Céntrate en: 1. Infraestructura, 2. Escalabilidad, 3. Riesgos.")
+    ])
+
+    seguridad_template = ChatPromptTemplate.from_messages([
+        ("system", "{system_prompt}"),
+        ("human", "Basado en este diseño de arquitectura: {arquitectura_previa}, define controles de seguridad y cumplimiento.")
+    ])
+
+    costos_template = ChatPromptTemplate.from_messages([
+        ("system", "{system_prompt}"),
+        ("human", "Para este proyecto: {proyecto} y este diseño: {arquitectura_previa}, estima costos y estrategias de ahorro.")
+    ])
+
+    final_template = ChatPromptTemplate.from_messages([
+        ("system", "Eres un Editor Técnico Senior."),
+        ("human", "Consolida los siguientes informes en un documento Markdown profesional:\n\nARQUITECTURA:\n{arquitectura}\n\nSEGURIDAD:\n{seguridad}\n\nCOSTOS:\n{costos}")
+    ])
+
+    return (
+        evaluacion_template, 
+        seguridad_template, 
+        costos_template,
+        final_template
     )
