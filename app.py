@@ -157,6 +157,44 @@ grafo = cargar_grafo()
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────────
+def mostrar_error_rate_limit(error_str: str):
+    """Muestra un aviso elegante cuando se supera el límite de tokens de la API."""
+    match = re.search(r'[Pp]lease try again in ([^\.\n]+)', error_str)
+    tiempo = match.group(1).strip() if match else None
+
+    tiempo_html = (
+        f"<p style='font-size:1rem;margin:0 0 6px 0;'>Inténtalo de nuevo en "
+        f"<strong style='color:#1d3557;font-size:1.1rem;'>{tiempo}</strong>.</p>"
+        if tiempo else
+        "<p style='font-size:1rem;margin:0 0 6px 0;'>Inténtalo de nuevo en unos minutos.</p>"
+    )
+
+    st.markdown(f"""
+    <div style="
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #1d3557;
+        border-radius: 6px;
+        padding: 1.4rem 1.8rem;
+        margin: 1.5rem 0;
+    ">
+        <p style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;
+                  color:#94a3b8;margin:0 0 10px 0;font-weight:600;">
+            Límite de uso alcanzado
+        </p>
+        <p style="font-size:1.05rem;font-weight:600;color:#0f1923;margin:0 0 10px 0;">
+            La API gratuita de Groq ha alcanzado su límite de tokens por minuto.
+        </p>
+        {tiempo_html}
+        <p style="font-size:0.85rem;color:#64748b;margin:10px 0 0 0;">
+            Las APIs gratuitas aplican restricciones de uso para garantizar el acceso a todos los usuarios.
+            No es necesario hacer ningún cambio: cuando transcurra el tiempo indicado, el análisis
+            se ejecutará con normalidad.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def extraer_fuentes(texto: str) -> list:
     """Extrae URLs citadas como enlaces Markdown [Título](url) del texto."""
     patron = r'\[([^\]]+)\]\((https?://[^\s\)\]]+)\)'
@@ -346,8 +384,12 @@ if run_btn:
                 )
 
     except Exception as e:
-        st.error(f"Error durante la ejecución: {str(e)}")
-        st.exception(e)
+        error_str = str(e)
+        if "rate_limit_exceeded" in error_str or "Rate limit" in error_str or "429" in error_str:
+            mostrar_error_rate_limit(error_str)
+        else:
+            st.error(f"Error durante la ejecución: {error_str}")
+            st.exception(e)
         st.stop()
 
     if _informe:
