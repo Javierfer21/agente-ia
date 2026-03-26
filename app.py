@@ -1,118 +1,173 @@
 import streamlit as st
-import os
 from dotenv import load_dotenv
-from main import ejecutar_agente_arquitectura
-from core.model_factory import get_model
+from main import stream_agente_arquitectura, get_graph
 
-# Cargar variables de entorno
 load_dotenv()
 
-# Configuración de la página
 st.set_page_config(
-    page_title="Agente de Arquitectura Cloud",
+    page_title="Equipo de Arquitectura Cloud",
     page_icon="🏗️",
-    layout="wide"
+    layout="wide",
 )
 
-# Inicializar el modelo de Groq
+# ── Cachear el grafo compilado ─────────────────────────────────────────────────
 @st.cache_resource
-def get_llm():
+def cargar_grafo():
     try:
-        return get_model()
-    except:
+        return get_graph()
+    except Exception:
         return None
 
-def analizar_arquitectura(contexto: str) -> str:
-    """Llama a la lógica multi-paso de main.py"""
-    try:
-        return ejecutar_agente_arquitectura(contexto)
-    except Exception as e:
-        return f"❌ Error en el análisis: {str(e)}"
+grafo = cargar_grafo()
 
-# ============ INTERFAZ STREAMLIT ============
+# ── Cabecera ───────────────────────────────────────────────────────────────────
+st.title("🏗️ Equipo de Arquitectura Cloud")
 
-st.title("🏗️ Agente de Arquitectura Cloud")
-
-# Presentación del equipo de agentes
 st.chat_message("assistant").markdown("""
-    👋 **¡Hola! Somos tu equipo de consultoría técnica automatizada.**
-    
-    Estamos aquí para ayudarte a diseñar soluciones robustas en la nube. Nuestro equipo está compuesto por:
-    *   **Arquitecto Senior:** Especialista en escalabilidad y patrones de diseño.
-    *   **Ingeniero de Seguridad:** Experto en blindaje y cumplimiento (DevSecOps).
-    *   **Consultor FinOps:** Tu aliado para optimizar costos y maximizar el retorno.
-    
-    **¿Qué proyecto tienes en mente hoy?** Describe tus necesidades abajo y nos pondremos a trabajar juntos.
+Bienvenido. Este sistema ejecuta un equipo real de **4 agentes IA independientes** con LangGraph:
+
+| Agente | Rol | Herramientas |
+|--------|-----|--------------|
+| 🏗️ **Arquitecto Senior** | Diseña la infraestructura cloud | Estimación AWS, patrones, SLA |
+| 🔒 **Ingeniero de Seguridad** | Audita y define controles | OWASP, checklist CIS, normativas |
+| 💰 **Consultor FinOps** | Calcula costos y optimizaciones | Precios AWS, Spot, Savings Plans |
+| 📝 **Editor Técnico** | Consolida el informe ejecutivo | — |
+
+Cada agente usa un **ciclo ReAct real**: razona → llama herramientas → observa resultados → repite hasta tener suficiente información.
 """)
 
-# Verificar API Key
-llm = get_llm()
-if not llm:
-    st.error("⚠️ **GROQ_API_KEY no configurada**")
-    st.info("Ve a la configuración de tu app en Streamlit Cloud → Secrets y añade:")
-    st.code("GROQ_API_KEY = 'gsk_tu_api_key_aqui'", language="toml")
+if not grafo:
+    st.error("⚠️ No se pudo construir el grafo. Verifica que `GROQ_API_KEY` esté configurada.")
+    st.code("GROQ_API_KEY = 'gsk_...'", language="toml")
+    st.info("En Streamlit Cloud: Settings → Secrets → añade la clave.")
     st.stop()
 
-# Input del usuario
-contexto = st.text_area(
+# ── Input ──────────────────────────────────────────────────────────────────────
+proyecto = st.text_area(
     "📋 Describe tu proyecto:",
-    placeholder="Ejemplo: Queremos migrar un e-commerce de Magento desde un servidor dedicado en España a AWS. Tenemos 50,000 productos, 10,000 usuarios diarios y picos de tráfico en Black Friday. Necesitamos alta disponibilidad y escalado automático.",
-    height=180
+    placeholder=(
+        "Ej: Migrar e-commerce Magento con 50k productos, 10k usuarios diarios y picos en Black Friday "
+        "a AWS. Alta disponibilidad requerida. Cumplimiento PCI-DSS para pagos con tarjeta."
+    ),
+    height=160,
 )
 
-# Opciones avanzadas (colapsadas)
 with st.expander("⚙️ Opciones avanzadas"):
     col1, col2 = st.columns(2)
     with col1:
-        modelo = st.selectbox(
-            "Modelo de IA:",
-            ["llama3-70b-8192", "llama3-8b-8192", "mixtral-8x7b-32768"],
-            index=0
-        )
+        st.selectbox("Modelo:", ["llama3-70b-8192", "llama3-8b-8192"], index=0)
     with col2:
-        temperatura = st.slider("Creatividad:", 0.0, 1.0, 0.3, 0.1)
+        st.slider("Temperatura:", 0.0, 1.0, 0.1, 0.05)
 
-# Botón de ejecución
-if st.button("🔍 Analizar Arquitectura", type="primary", use_container_width=True):
-    if not contexto or len(contexto) < 20:
-        st.warning("⚠️ Por favor, describe tu proyecto con más detalle (mínimo 20 caracteres).")
-    else:
-        with st.spinner("🏗️ El arquitecto está diseñando tu solución..."):
-            resultado = analizar_arquitectura(contexto)
-            
-        st.success("✅ Análisis completado")
+# ── Ejecución ──────────────────────────────────────────────────────────────────
+if st.button("🚀 Ejecutar análisis multi-agente", type="primary", use_container_width=True):
+    if not proyecto or len(proyecto.strip()) < 20:
+        st.warning("⚠️ Describe el proyecto con más detalle (mínimo 20 caracteres).")
+        st.stop()
+
+    st.markdown("---")
+    st.markdown("## 🤖 Progreso de los agentes")
+
+    # Widgets de estado por agente
+    status_arquitecto = st.status("🏗️ Arquitecto Senior — analizando...", state="running", expanded=True)
+    status_seguridad  = st.status("🔒 Ingeniero de Seguridad — en espera", state="running", expanded=False)
+    status_finops     = st.status("💰 Consultor FinOps — en espera",       state="running", expanded=False)
+    status_editor     = st.status("📝 Editor Técnico — en espera",          state="running", expanded=False)
+
+    # Placeholders para mostrar el output de cada agente en tiempo real
+    out_arquitecto = st.empty()
+    out_seguridad  = st.empty()
+    out_finops     = st.empty()
+    out_editor     = st.empty()
+
+    informe_final = ""
+
+    try:
+        for nodo, actualizaciones in stream_agente_arquitectura(proyecto.strip()):
+
+            if nodo == "arquitecto" and "arquitectura_output" in actualizaciones:
+                contenido = actualizaciones["arquitectura_output"]
+                status_arquitecto.update(
+                    label="🏗️ Arquitecto Senior — ✅ completado",
+                    state="complete", expanded=False
+                )
+                with out_arquitecto.expander("Ver análisis del Arquitecto", expanded=False):
+                    st.markdown(contenido)
+                status_seguridad.update(label="🔒 Ingeniero de Seguridad — analizando...", expanded=True)
+
+            elif nodo == "seguridad" and "seguridad_output" in actualizaciones:
+                contenido = actualizaciones["seguridad_output"]
+                status_seguridad.update(
+                    label="🔒 Ingeniero de Seguridad — ✅ completado",
+                    state="complete", expanded=False
+                )
+                with out_seguridad.expander("Ver análisis de Seguridad", expanded=False):
+                    st.markdown(contenido)
+                status_finops.update(label="💰 Consultor FinOps — analizando...", expanded=True)
+
+            elif nodo == "finops" and "finops_output" in actualizaciones:
+                contenido = actualizaciones["finops_output"]
+                status_finops.update(
+                    label="💰 Consultor FinOps — ✅ completado",
+                    state="complete", expanded=False
+                )
+                with out_finops.expander("Ver análisis FinOps", expanded=False):
+                    st.markdown(contenido)
+                status_editor.update(label="📝 Editor Técnico — consolidando...", expanded=True)
+
+            elif nodo == "editor" and "informe_final" in actualizaciones:
+                informe_final = actualizaciones["informe_final"]
+                status_editor.update(
+                    label="📝 Editor Técnico — ✅ completado",
+                    state="complete", expanded=False
+                )
+
+    except Exception as e:
+        st.error(f"❌ Error durante la ejecución: {str(e)}")
+        st.exception(e)
+        st.stop()
+
+    # ── Resultado final ────────────────────────────────────────────────────────
+    if informe_final:
+        st.success("✅ Todos los agentes completaron su análisis.")
         st.markdown("---")
-        st.markdown("## 📊 Resultado del Análisis")
-        st.markdown(resultado)
-        
-        # Botón para descargar
+        st.markdown("## 📊 Informe Final Consolidado")
+        st.markdown(informe_final)
+
         st.download_button(
-            label="📥 Descargar informe",
-            data=resultado,
-            file_name="arquitectura_cloud.md",
-            mime="text/markdown"
+            label="📥 Descargar informe (.md)",
+            data=informe_final,
+            file_name="informe_arquitectura_cloud.md",
+            mime="text/markdown",
+            use_container_width=True,
         )
 
-# Sidebar
+# ── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("ℹ️ Sobre esta app")
+    st.header("ℹ️ Sistema")
     st.markdown("""
-    **Versión:** 2.0.0 (Python 3.14 compatible)  
-    **Motor:** LangChain + Groq  
-    **Modelo:** Llama 3 / Mixtral
-    
-    ---
-    
-    **Características:**
-    - ✅ Sin dependencias Rust
-    - ✅ Compatible Python 3.14
-    - ✅ Respuesta en segundos
-    - ✅ Arquitecturas AWS/Azure/GCP
+    **Motor:** LangGraph + Groq
+    **Modelo:** Llama 3 70B
+    **Agentes:** 4 independientes
+    **Herramientas:** 9 (3 por agente)
+    **Patrón:** ReAct (reason + act)
     """)
-    
     st.markdown("---")
-    st.markdown("**Estado del sistema:**")
-    if llm:
-        st.success("🟢 API de Groq conectada")
+    if grafo:
+        st.success("🟢 Grafo multi-agente listo")
     else:
-        st.error("🔴 API no configurada")
+        st.error("🔴 Error en el grafo")
+
+    st.markdown("---")
+    st.markdown("""
+    **Flujo de colaboración:**
+    ```
+    Arquitecto
+        ↓
+    Seguridad (lee arquitectura)
+        ↓
+    FinOps (lee arquitectura)
+        ↓
+    Editor (consolida todo)
+    ```
+    """)

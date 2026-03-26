@@ -1,31 +1,8 @@
-from langchain.prompts import ChatPromptTemplate
+# Este módulo ha sido reemplazado por core/tools.py y core/agents.py
+# Se mantiene para compatibilidad con posibles imports externos.
 
 def get_architecture_prompts():
-    """Define los prompts de LangChain para cada etapa del análisis."""
-    
-    evaluacion_template = ChatPromptTemplate.from_messages([
-        ("system", "{system_prompt}"),
-        ("human", "Analiza estos requisitos: {proyecto}. Céntrate en: 1. Infraestructura, 2. Escalabilidad, 3. Riesgos.")
-    ])
-
-    seguridad_template = ChatPromptTemplate.from_messages([
-        ("system", "{system_prompt}"),
-        ("human", "Basado en este diseño de arquitectura: {arquitectura_previa}, define controles de seguridad y cumplimiento.")
-    ])
-
-    costos_template = ChatPromptTemplate.from_messages([
-        ("system", "{system_prompt}"),
-        ("human", "Para este proyecto: {proyecto} y este diseño: {arquitectura_previa}, estima costos y estrategias de ahorro.")
-    ])
-
-    final_template = ChatPromptTemplate.from_messages([
-        ("system", "Eres un Editor Técnico Senior."),
-        ("human", "Consolida los siguientes informes en un documento Markdown profesional:\n\nARQUITECTURA:\n{arquitectura}\n\nSEGURIDAD:\n{seguridad}\n\nCOSTOS:\n{costos}")
-    ])
-
-    return (
-        evaluacion_template, 
-        seguridad_template, 
-        costos_template,
-        final_template
+    raise NotImplementedError(
+        "get_architecture_prompts() fue eliminado. "
+        "Usa core.agents.build_*_agent() y core.tools.* en su lugar."
     )

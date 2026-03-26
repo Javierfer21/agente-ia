@@ -4,15 +4,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def get_model():
-    api_key = os.getenv("GROQ_API_KEY")
-    
-    if not api_key:
-        raise ValueError("No se encontró GROQ_API_KEY en el archivo .env")
 
-    # Cambiamos la forma de pasar el modelo para máxima compatibilidad
+def get_model(model_name: str = "llama3-70b-8192", temperature: float = 0.1) -> ChatGroq:
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY no encontrada en el archivo .env")
+
     return ChatGroq(
-        model="llama3-70b-8192", # Usamos 'model' en lugar de 'model_name'
+        model=model_name,
         groq_api_key=api_key,
-        temperature=0.1
+        temperature=temperature,
     )
