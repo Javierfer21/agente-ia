@@ -5,12 +5,132 @@ from main import stream_agente_arquitectura, get_graph
 load_dotenv()
 
 st.set_page_config(
-    page_title="Equipo de Arquitectura Cloud",
-    page_icon="🏗️",
+    page_title="Cloud Architecture Advisory",
+    page_icon=None,
     layout="wide",
 )
 
-# ── Cachear el grafo compilado ─────────────────────────────────────────────────
+# Estilos corporativos
+st.markdown("""
+<style>
+    /* Tipografía y fondo general */
+    html, body, [class*="css"] {
+        font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* Título principal */
+    h1 {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: #0f1923;
+    }
+
+    /* Subtítulos */
+    h2 {
+        font-weight: 600;
+        color: #0f1923;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 8px;
+        margin-top: 2rem;
+    }
+
+    h3 { font-weight: 600; color: #1e293b; }
+
+    /* Tabla de agentes */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    th {
+        background-color: #f8fafc;
+        font-weight: 600;
+        text-align: left;
+        padding: 10px 14px;
+        border-bottom: 2px solid #e2e8f0;
+        color: #475569;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+    td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
+
+    /* Botón primario */
+    .stButton > button[kind="primary"] {
+        background-color: #0f172a;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        padding: 0.6rem 1.5rem;
+    }
+    .stButton > button[kind="primary"]:hover {
+        background-color: #1e293b;
+    }
+
+    /* Botón secundario */
+    .stButton > button:not([kind="primary"]) {
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        color: #334155;
+        font-weight: 500;
+        background-color: white;
+    }
+    .stButton > button:not([kind="primary"]):hover {
+        border-color: #94a3b8;
+        background-color: #f8fafc;
+    }
+
+    /* Text area */
+    .stTextArea textarea {
+        border-radius: 4px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    .stTextArea textarea:focus {
+        border-color: #0f172a;
+        box-shadow: 0 0 0 2px rgba(15,23,42,0.1);
+    }
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #f8fafc;
+        border-right: 1px solid #e2e8f0;
+    }
+
+    /* Divider */
+    hr { border-color: #e2e8f0; margin: 1.5rem 0; }
+
+    /* Ocultar el avatar del chat */
+    [data-testid="chatAvatarIcon-assistant"] { display: none; }
+
+    /* Bloque de introducción */
+    [data-testid="stChatMessage"] {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 1rem 1.5rem;
+    }
+
+    /* Download button */
+    .stDownloadButton > button {
+        border: 1px solid #0f172a;
+        color: #0f172a;
+        background-color: white;
+        font-weight: 600;
+        border-radius: 4px;
+    }
+    .stDownloadButton > button:hover {
+        background-color: #0f172a;
+        color: white;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# ── Cache del grafo ─────────────────────────────────────────────────────────────
 @st.cache_resource
 def cargar_grafo():
     try:
@@ -20,29 +140,38 @@ def cargar_grafo():
 
 grafo = cargar_grafo()
 
-# ── Cabecera ───────────────────────────────────────────────────────────────────
-st.title("🏗️ Equipo de Arquitectura Cloud")
+
+# ── Cabecera ────────────────────────────────────────────────────────────────────
+st.title("Cloud Architecture Advisory")
+st.caption("Sistema de análisis multi-agente para diseño de infraestructura cloud")
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 st.chat_message("assistant").markdown("""
-Bienvenido. Este sistema ejecuta un equipo real de **4 agentes IA independientes** con LangGraph:
+Este sistema coordina un equipo de cuatro agentes especializados que colaboran de forma secuencial
+para producir un informe técnico completo. Cada agente opera de forma independiente con su propio
+conjunto de herramientas y ciclo de razonamiento autónomo.
 
-| Agente | Rol | Herramientas |
-|--------|-----|--------------|
-| 🏗️ **Arquitecto Senior** | Diseña la infraestructura cloud | Estimación AWS, patrones, SLA |
-| 🔒 **Ingeniero de Seguridad** | Audita y define controles | OWASP, checklist CIS, normativas |
-| 💰 **Consultor FinOps** | Calcula costos y optimizaciones | Precios AWS, Spot, Savings Plans |
-| 📝 **Editor Técnico** | Consolida el informe ejecutivo | — |
+| Especialista | Función | Herramientas |
+|---|---|---|
+| **Arquitecto Senior** | Diseño de infraestructura y selección de servicios cloud | Estimación AWS, patrones arquitectónicos, análisis de SLA |
+| **Ingeniero de Seguridad** | Auditoría de controles y cumplimiento normativo | Checklist CIS, análisis OWASP, marcos regulatorios |
+| **Consultor FinOps** | Estimación de costos y estrategia de optimización | Precios AWS, cálculo Spot, planes de ahorro |
+| **Editor Técnico** | Consolidación del informe ejecutivo final | — |
 
-Cada agente usa un **ciclo ReAct real**: razona → llama herramientas → observa resultados → repite hasta tener suficiente información.
+Describa los requisitos del proyecto en el campo inferior para iniciar el análisis.
 """)
 
 if not grafo:
-    st.error("⚠️ No se pudo construir el grafo. Verifica que `GROQ_API_KEY` esté configurada.")
+    st.error("No se pudo inicializar el sistema. Verifique que GROQ_API_KEY esté configurada correctamente.")
     st.code("GROQ_API_KEY = 'gsk_...'", language="toml")
-    st.info("En Streamlit Cloud: Settings → Secrets → añade la clave.")
+    st.info("En Streamlit Cloud: Settings > Secrets")
     st.stop()
 
-# ── Input ──────────────────────────────────────────────────────────────────────
+
+# ── Input ───────────────────────────────────────────────────────────────────────
+st.markdown("<br>", unsafe_allow_html=True)
+
 EJEMPLO = (
     "Somos una clínica privada en España con 3 sedes. Queremos digitalizar la gestión de historiales "
     "médicos de 80.000 pacientes, actualmente en papel y Excel. Necesitamos una aplicación web para "
@@ -54,46 +183,49 @@ EJEMPLO = (
 if "proyecto_texto" not in st.session_state:
     st.session_state.proyecto_texto = ""
 
-if st.button("💡 Usar ejemplo de prueba", use_container_width=False):
+if st.button("Cargar caso de ejemplo", use_container_width=False):
     st.session_state.proyecto_texto = EJEMPLO
 
 proyecto = st.text_area(
-    "📋 Describe tu proyecto:",
+    "Descripción del proyecto",
     value=st.session_state.proyecto_texto,
     placeholder=(
-        "Ej: Migrar e-commerce Magento con 50k productos, 10k usuarios diarios y picos en Black Friday "
-        "a AWS. Alta disponibilidad requerida. Cumplimiento PCI-DSS para pagos con tarjeta."
+        "Describa el proyecto con el mayor detalle posible: sector, escala, requisitos de disponibilidad, "
+        "normativas aplicables, volumen de usuarios, sistema actual si lo hay..."
     ),
     height=160,
 )
 
-with st.expander("⚙️ Opciones avanzadas"):
+with st.expander("Configuración avanzada"):
     col1, col2 = st.columns(2)
     with col1:
-        st.selectbox("Modelo:", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"], index=0)
+        st.selectbox("Modelo de lenguaje", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"], index=0)
     with col2:
-        st.slider("Temperatura:", 0.0, 1.0, 0.1, 0.05)
+        st.slider("Temperatura", 0.0, 1.0, 0.1, 0.05)
 
-# ── Ejecución ──────────────────────────────────────────────────────────────────
-if st.button("🚀 Ejecutar análisis multi-agente", type="primary", use_container_width=True):
+st.markdown("<br>", unsafe_allow_html=True)
+
+
+# ── Ejecución ───────────────────────────────────────────────────────────────────
+if st.button("Ejecutar análisis", type="primary", use_container_width=True):
     if not proyecto or len(proyecto.strip()) < 20:
-        st.warning("⚠️ Describe el proyecto con más detalle (mínimo 20 caracteres).")
+        st.warning("Por favor, describa el proyecto con mayor detalle antes de continuar.")
         st.stop()
 
     st.markdown("---")
-    st.markdown("## 🤖 Progreso de los agentes")
+    st.markdown("## Progreso del análisis")
 
-    # Widgets de estado por agente
-    status_arquitecto = st.status("🏗️ Arquitecto Senior — analizando...", state="running", expanded=True)
-    status_seguridad  = st.status("🔒 Ingeniero de Seguridad — en espera", state="running", expanded=False)
-    status_finops     = st.status("💰 Consultor FinOps — en espera",       state="running", expanded=False)
-    status_editor     = st.status("📝 Editor Técnico — en espera",          state="running", expanded=False)
+    with st.status("Arquitecto Senior — en proceso", state="running", expanded=True) as status_arquitecto:
+        slot_arquitecto = st.empty()
 
-    # Placeholders para mostrar el output de cada agente en tiempo real
-    out_arquitecto = st.empty()
-    out_seguridad  = st.empty()
-    out_finops     = st.empty()
-    out_editor     = st.empty()
+    with st.status("Ingeniero de Seguridad — en espera", state="running", expanded=False) as status_seguridad:
+        slot_seguridad = st.empty()
+
+    with st.status("Consultor FinOps — en espera", state="running", expanded=False) as status_finops:
+        slot_finops = st.empty()
+
+    with st.status("Editor Técnico — en espera", state="running", expanded=False) as status_editor:
+        slot_editor = st.empty()
 
     informe_final = ""
 
@@ -101,88 +233,99 @@ if st.button("🚀 Ejecutar análisis multi-agente", type="primary", use_contain
         for nodo, actualizaciones in stream_agente_arquitectura(proyecto.strip()):
 
             if nodo == "arquitecto" and "arquitectura_output" in actualizaciones:
-                contenido = actualizaciones["arquitectura_output"]
+                slot_arquitecto.markdown(actualizaciones["arquitectura_output"])
                 status_arquitecto.update(
-                    label="🏗️ Arquitecto Senior — ✅ completado",
+                    label="Arquitecto Senior — completado",
                     state="complete", expanded=False
                 )
-                with out_arquitecto.expander("Ver análisis del Arquitecto", expanded=False):
-                    st.markdown(contenido)
-                status_seguridad.update(label="🔒 Ingeniero de Seguridad — analizando...", expanded=True)
+                status_seguridad.update(
+                    label="Ingeniero de Seguridad — en proceso",
+                    expanded=True
+                )
 
             elif nodo == "seguridad" and "seguridad_output" in actualizaciones:
-                contenido = actualizaciones["seguridad_output"]
+                slot_seguridad.markdown(actualizaciones["seguridad_output"])
                 status_seguridad.update(
-                    label="🔒 Ingeniero de Seguridad — ✅ completado",
+                    label="Ingeniero de Seguridad — completado",
                     state="complete", expanded=False
                 )
-                with out_seguridad.expander("Ver análisis de Seguridad", expanded=False):
-                    st.markdown(contenido)
-                status_finops.update(label="💰 Consultor FinOps — analizando...", expanded=True)
+                status_finops.update(
+                    label="Consultor FinOps — en proceso",
+                    expanded=True
+                )
 
             elif nodo == "finops" and "finops_output" in actualizaciones:
-                contenido = actualizaciones["finops_output"]
+                slot_finops.markdown(actualizaciones["finops_output"])
                 status_finops.update(
-                    label="💰 Consultor FinOps — ✅ completado",
+                    label="Consultor FinOps — completado",
                     state="complete", expanded=False
                 )
-                with out_finops.expander("Ver análisis FinOps", expanded=False):
-                    st.markdown(contenido)
-                status_editor.update(label="📝 Editor Técnico — consolidando...", expanded=True)
+                status_editor.update(
+                    label="Editor Técnico — consolidando informe",
+                    expanded=True
+                )
 
             elif nodo == "editor" and "informe_final" in actualizaciones:
                 informe_final = actualizaciones["informe_final"]
+                slot_editor.markdown(informe_final)
                 status_editor.update(
-                    label="📝 Editor Técnico — ✅ completado",
+                    label="Editor Técnico — completado",
                     state="complete", expanded=False
                 )
 
     except Exception as e:
-        st.error(f"❌ Error durante la ejecución: {str(e)}")
+        st.error(f"Error durante la ejecución: {str(e)}")
         st.exception(e)
         st.stop()
 
-    # ── Resultado final ────────────────────────────────────────────────────────
     if informe_final:
-        st.success("✅ Todos los agentes completaron su análisis.")
+        st.success("Análisis completado. Los cuatro agentes han finalizado su trabajo.")
         st.markdown("---")
-        st.markdown("## 📊 Informe Final Consolidado")
+        st.markdown("## Informe Final")
         st.markdown(informe_final)
 
         st.download_button(
-            label="📥 Descargar informe (.md)",
+            label="Descargar informe (.md)",
             data=informe_final,
             file_name="informe_arquitectura_cloud.md",
             mime="text/markdown",
             use_container_width=True,
         )
 
-# ── Sidebar ────────────────────────────────────────────────────────────────────
+
+# ── Sidebar ─────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("ℹ️ Sistema")
+    st.markdown("### Sistema")
     st.markdown("""
-    **Motor:** LangGraph + Groq
-    **Modelo:** Llama 3 70B
-    **Agentes:** 4 independientes
-    **Herramientas:** 9 (3 por agente)
-    **Patrón:** ReAct (reason + act)
+    | | |
+    |---|---|
+    | Motor | LangGraph + Groq |
+    | Modelo | Llama 3.3 70B |
+    | Agentes | 4 especializados |
+    | Herramientas | 9 (3 por agente) |
+    | Razonamiento | ReAct |
     """)
-    st.markdown("---")
-    if grafo:
-        st.success("🟢 Grafo multi-agente listo")
-    else:
-        st.error("🔴 Error en el grafo")
 
     st.markdown("---")
+
+    if grafo:
+        st.success("Sistema operativo")
+    else:
+        st.error("Error de inicialización")
+
+    st.markdown("---")
+    st.markdown("**Flujo de trabajo**")
     st.markdown("""
-    **Flujo de colaboración:**
     ```
-    Arquitecto
-        ↓
-    Seguridad (lee arquitectura)
-        ↓
-    FinOps (lee arquitectura)
-        ↓
-    Editor (consolida todo)
+    Arquitecto Senior
+         |
+    Ingeniero de Seguridad
+         |
+    Consultor FinOps
+         |
+    Editor Técnico
+         |
+    Informe ejecutivo
     ```
     """)
+    st.caption("Cada agente recibe el output de los anteriores como contexto.")
