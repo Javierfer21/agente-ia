@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 # Esto debe ir arriba del todo, antes de los imports de 'core'
 load_dotenv()
 
-import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# import sys
+# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from crewai import Crew, Process
 from core.agents import analista_arquitectura
