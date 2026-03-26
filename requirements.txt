@@ -1,4 +1,8 @@
 streamlit
 crewai
 langchain-groq
+python-dotenvstreamlit
+crewai==0.28.8
+langchain-groq
 python-dotenv
+pydantic==2.6.4
