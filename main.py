@@ -1,46 +1,42 @@
 import os
+import sys
+
+# Streamlit no encontraba la carpeta 'core' y lo estoy forzando desde aquí
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
 from dotenv import load_dotenv
-
-# Esto debe ir arriba del todo, antes de los imports de 'core'
-load_dotenv()
-
-# import sys
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 from crewai import Crew, Process
+
+# Importaciones de tus agentes y tareas
 from core.agents import analista_arquitectura
 from core.tasks import tarea_evaluacion_tecnica
 
-class AgenciaInteligencia:
-    def __init__(self):
-        # Instanciamos los componentes
-        self.agente = analista_arquitectura()
-        
-    def ejecutar_analisis(self, requerimientos_cliente):
-        # Definimos la tarea con el input dinámico
-        tarea = tarea_evaluacion_tecnica(self.agente, requerimientos_cliente)
-        
-        # Configurando el equipo (Crew)
-        equipo = Crew(
-            agents=[self.agente],
-            tasks=[tarea],
-            process=Process.sequential,
-            verbose=True
-        )
-        
-        return equipo.kickoff()
+# Cargo las variables de entorno (Local lee .env, Cloud lee 'Secrets')
+load_dotenv()
 
-if __name__ == "__main__":
-    contexto_demo = """
-    Necesitamos migrar nuestra plataforma de e-commerce a una arquitectura de microservicios. 
-    Actualmente usamos una base de datos SQL centralizada que sufre picos de carga. 
-    Buscamos integrar una solución de búsqueda semántica y agentes de atención al cliente.
+def ejecutar_agente_arquitectura(contexto_proyecto):
+    """
+    Orquesta el proceso de análisis de arquitectura usando CrewAI.
     """
     
-    print("\n--- Iniciando Proceso de Análisis de Arquitectura ---\n")
-    
-    orquestador = AgenciaInteligencia()
-    resultado = orquestador.ejecutar_analisis(contexto_demo)
-    
-    print("\n--- Informe Final Generado ---\n")
-    print(resultado)
+    # Configuro la tarea con el contexto dinámico del usuario
+    tarea_personalizada = tarea_evaluacion_tecnica(analista_arquitectura, contexto_proyecto)
+
+    # Crea0 el equipo (Crew)
+    crew = Crew(
+        agents=[analista_arquitectura],
+        tasks=[tarea_personalizada],
+        process=Process.sequential,
+        verbose=True
+    )
+
+
+    resultado = crew.kickoff()
+    return resultado
+
+if __name__ == "__main__":
+    # Prueba rápida de ejecución local
+    test_context = "Queremos migrar un e-commerce de un servidor físico a AWS para escalar."
+    print(ejecutar_agente_arquitectura(test_context))
