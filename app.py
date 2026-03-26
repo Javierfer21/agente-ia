@@ -55,31 +55,34 @@ st.markdown("""
     }
     td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; }
 
-    /* Botón primario */
+    /* Botón primario — azul marino */
     .stButton > button[kind="primary"] {
-        background-color: #0f172a;
+        background-color: #1d3557;
         color: white;
         border: none;
         border-radius: 4px;
         font-weight: 600;
         letter-spacing: 0.03em;
         padding: 0.6rem 1.5rem;
+        transition: background-color 0.15s ease;
     }
     .stButton > button[kind="primary"]:hover {
-        background-color: #1e293b;
+        background-color: #14253f;
+        color: white;
     }
 
-    /* Botón secundario */
+    /* Botón secundario — contorno azul marino */
     .stButton > button:not([kind="primary"]) {
-        border: 1px solid #cbd5e1;
+        border: 1px solid #1d3557;
         border-radius: 4px;
-        color: #334155;
+        color: #1d3557;
         font-weight: 500;
         background-color: white;
+        transition: all 0.15s ease;
     }
     .stButton > button:not([kind="primary"]):hover {
-        border-color: #94a3b8;
-        background-color: #f8fafc;
+        background-color: #1d3557;
+        color: white;
     }
 
     /* Text area */
@@ -116,14 +119,15 @@ st.markdown("""
 
     /* Download button */
     .stDownloadButton > button {
-        border: 1px solid #0f172a;
-        color: #0f172a;
+        border: 1px solid #1d3557;
+        color: #1d3557;
         background-color: white;
         font-weight: 600;
         border-radius: 4px;
+        transition: all 0.15s ease;
     }
     .stDownloadButton > button:hover {
-        background-color: #0f172a;
+        background-color: #1d3557;
         color: white;
     }
 </style>
