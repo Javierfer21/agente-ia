@@ -7,3 +7,4 @@ langgraph>=0.2.0
 python-dotenv
 markdown
 weasyprint
+tavily-python
