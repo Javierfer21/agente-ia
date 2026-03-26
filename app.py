@@ -43,8 +43,23 @@ if not grafo:
     st.stop()
 
 # ── Input ──────────────────────────────────────────────────────────────────────
+EJEMPLO = (
+    "Somos una clínica privada en España con 3 sedes. Queremos digitalizar la gestión de historiales "
+    "médicos de 80.000 pacientes, actualmente en papel y Excel. Necesitamos una aplicación web para "
+    "que los médicos accedan desde cualquier sede, con disponibilidad 24/7. Manejamos datos de salud "
+    "sensibles y debemos cumplir con GDPR y la normativa española de protección de datos sanitarios. "
+    "Esperamos unos 200 usuarios concurrentes en horas pico."
+)
+
+if "proyecto_texto" not in st.session_state:
+    st.session_state.proyecto_texto = ""
+
+if st.button("💡 Usar ejemplo de prueba", use_container_width=False):
+    st.session_state.proyecto_texto = EJEMPLO
+
 proyecto = st.text_area(
     "📋 Describe tu proyecto:",
+    value=st.session_state.proyecto_texto,
     placeholder=(
         "Ej: Migrar e-commerce Magento con 50k productos, 10k usuarios diarios y picos en Black Friday "
         "a AWS. Alta disponibilidad requerida. Cumplimiento PCI-DSS para pagos con tarjeta."
