@@ -2,7 +2,7 @@
 
 Sistema de consultoría técnica automatizada basado en **múltiples agentes de IA independientes** que colaboran para analizar requisitos de proyectos y producir informes profesionales de arquitectura cloud.
 
-Construido con **LangGraph**, **LangChain** y **Groq** (Llama 3 70B), desplegado como aplicación web con **Streamlit**.
+Construido con **LangGraph**, **LangChain** y **Groq** (Llama 3.3 70B), desplegado como aplicación web con **Streamlit**.
 
 ---
 
@@ -88,7 +88,7 @@ Consolida los tres informes en un documento Markdown ejecutivo sin herramientas 
 |---|---|
 | Orquestación de agentes | LangGraph `StateGraph` |
 | Framework LLM | LangChain + LangChain-Core |
-| Modelo de lenguaje | Llama 3 70B (vía Groq API) |
+| Modelo de lenguaje | Llama 3.3 70B Versatile (vía Groq API) |
 | Interfaz web | Streamlit |
 | Gestión de entorno | python-dotenv |
 

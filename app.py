@@ -55,7 +55,7 @@ proyecto = st.text_area(
 with st.expander("⚙️ Opciones avanzadas"):
     col1, col2 = st.columns(2)
     with col1:
-        st.selectbox("Modelo:", ["llama3-70b-8192", "llama3-8b-8192"], index=0)
+        st.selectbox("Modelo:", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"], index=0)
     with col2:
         st.slider("Temperatura:", 0.0, 1.0, 0.1, 0.05)
 
