@@ -1,17 +1,17 @@
 # 🤖 Consultor de Arquitectura con Agentes de IA
 
-Este proyecto es un sistema de **IA Generativa Agéntica** diseñado para analizar requerimientos técnicos complejos y proponer arquitecturas de software escalables. Utiliza el framework **CrewAI** para la orquestación de agentes y **Groq** para una inferencia de alta velocidad con modelos **Llama 3.1**.
+Este proyecto es un sistema de **IA Generativa Agéntica** diseñado para analizar requerimientos técnicos complejos y proponer arquitecturas de software escalables. Utiliza **LangChain (LCEL)** para la orquestación del flujo de trabajo y **Groq** para una inferencia de alta velocidad con modelos **Llama 3**.
 
 ## 🚀 Características
-* **Agentes Especializados:** Implementación de un *Senior Solutions Architect* con roles y trasfondos (backstory) definidos.
-* **Orquestación con CrewAI:** Gestión de tareas y procesos secuenciales para la generación de informes técnicos.
+* **Equipo de Agentes Virtuales:** Flujo de trabajo secuencial con roles de Arquitectura, Seguridad y FinOps.
+* **Orquestación con LangChain:** Uso de cadenas (Chains) para un control preciso del contexto y la generación de informes.
 * **Interfaz Web:** Despliegue interactivo mediante **Streamlit**.
 * **Baja Latencia:** Integración con la API de **Groq** para respuestas casi instantáneas.
 * **Seguridad:** Gestión de variables de entorno para proteger credenciales sensibles.
 
 ## 🛠️ Stack Tecnológico
 * **Lenguaje:** Python 3.10+
-* [cite_start]**Framework de Agentes:** CrewAI [cite: 1]
+* **Framework:** LangChain (LCEL)
 * **LLM:** Llama 3.1 (vía Groq)
 * **Interfaz:** Streamlit
 * **Entorno:** Virtualenv con soporte para `.env`
