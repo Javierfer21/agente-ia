@@ -201,15 +201,6 @@ proyecto = st.text_area(
     height=160,
 )
 
-with st.expander("Configuración avanzada"):
-    col1, col2 = st.columns(2)
-    with col1:
-        st.selectbox("Modelo de lenguaje", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"], index=0)
-    with col2:
-        st.slider("Temperatura", 0.0, 1.0, 0.1, 0.05)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
 
 # ── Ejecución ───────────────────────────────────────────────────────────────────
 if st.button("Ejecutar análisis", type="primary", use_container_width=True):
