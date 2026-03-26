@@ -1,6 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 from main import stream_agente_arquitectura, get_graph
+from core.pdf_export import markdown_a_pdf
 
 load_dotenv()
 
@@ -288,11 +289,14 @@ if st.button("Ejecutar análisis", type="primary", use_container_width=True):
         st.markdown("## Informe Final")
         st.markdown(informe_final)
 
+        with st.spinner("Generando PDF..."):
+            pdf_bytes = markdown_a_pdf(informe_final)
+
         st.download_button(
-            label="Descargar informe (.md)",
-            data=informe_final,
-            file_name="informe_arquitectura_cloud.md",
-            mime="text/markdown",
+            label="Descargar informe (.pdf)",
+            data=pdf_bytes,
+            file_name="informe_arquitectura_cloud.pdf",
+            mime="application/pdf",
             use_container_width=True,
         )
 
